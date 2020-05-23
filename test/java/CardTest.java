@@ -68,4 +68,20 @@ public class CardTest {
             new Card("");
         });
     }
+
+    @Test
+    public void testCardGetValueReturnsCorrectResultOnSymbolAndNumber() throws IllegalInputException {
+        Card testCard = new Card("s3");
+        int expectedResult = 3;
+
+        assertEquals(expectedResult, testCard.getValue());
+    }
+
+    @Test
+    public void testCardGetValueReturnsCorrectResultOnSymbolAndLetter() throws IllegalInputException {
+        Card testCard = new Card("sj");
+        int expectedResult = 11;
+
+        assertEquals(expectedResult, testCard.getValue());
+    }
 }
