@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public class Card {
 
-    String cardCode;
+    private String cardCode;
     private final int MAX_LENGTH = 3;
     private final int MIN_LENGTH = 2;
 
