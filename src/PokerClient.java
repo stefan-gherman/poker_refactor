@@ -1,54 +1,62 @@
+import com.codecool.customexception.IllegalInputException;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PokerClient {
 
-    public Card card1;
-    public Card card2;
-    public Card card3;
-    public Card card4;
-    public Card card5;
+    private final int HAND_SIZE = 5;
+    private Card[] cardsInHand = new Card[HAND_SIZE];
 
-    public PokerClient(String p1, String p2, String p3, String p4, String p5) {
-        this.card1 = new Card(p1.toUpperCase());
-        this.card2 = new Card(p2.toUpperCase());
-        this.card3 = new Card(p3.toUpperCase());
-        this.card4 = new Card(p4.toUpperCase());
-        this.card5 = new Card(p5.toUpperCase());
-    }
-
-    public boolean highestCardIsMine(String p1, String p2, String p3, String p4, String p5) {
-        Card hc = new Card("s2");
-        List<Card> o = new ArrayList<Card>();
-        List<Card> m = new ArrayList<Card>();
-        o.add(new Card(p1.toUpperCase()));
-        o.add(new Card(p2.toUpperCase()));
-        o.add(new Card(p3.toUpperCase()));
-        o.add(new Card(p4.toUpperCase()));
-        o.add(new Card(p5.toUpperCase()));
-        m.add(card1);
-        m.add(card2);
-        m.add(card3);
-        m.add(card4);
-        m.add(card5);
-
-        for (int i = 0; i < o.size(); i++) {
-            Card mc = m.get(i);
-            for (int j = 0; j < o.size(); j++) {
-                Card oc = o.get(j);
-                if (oc.getValue() >= mc.getValue()) {
-                    if (oc.getValue() >= hc.getValue()) {
-                        hc = oc;
-                    }
-                } else {
-                    if (mc.getValue() > hc.getValue()) {
-                        hc = mc;
-                    }
-                }
-            }
+    public PokerClient(String cards) throws IllegalInputException {
+        if(cards.length() == 0) {
+            throw new IllegalInputException("Invalid Empty String");
         }
 
-        return m.contains(hc);
+        String[] cardsSplitFromInput = cards.split("\\s+");
+
+        if(cardsSplitFromInput.length != HAND_SIZE) {
+            throw new IllegalInputException(String.format("Unsuitable number of cards number must be equal to {}", HAND_SIZE));
+        }
+        for( int counter = 0 ; counter < HAND_SIZE; counter ++) {
+            cardsInHand[counter] = new Card(cardsSplitFromInput[counter]);
+        }
+    }
+
+
+    public boolean highestCardIsMine(String opponentHand) throws IllegalInputException {
+
+        if (opponentHand.length() == 0) {
+            throw new IllegalInputException("Invalid Empty String");
+        }
+        String[] opponentCardsFromSplit = opponentHand.split("\\s+");
+
+        if(opponentCardsFromSplit.length != HAND_SIZE) {
+            throw new IllegalInputException(String.format("Unsuitable number of cards number must be equal to {}", HAND_SIZE));
+        }
+        List<Card> opponentCards = new ArrayList();
+        List<Card> myCards = new ArrayList();
+        for(int counter =0 ;counter < HAND_SIZE; counter ++) {
+            opponentCards.add(new Card(opponentCardsFromSplit[counter]));
+        }
+        myCards.addAll(Arrays.asList(cardsInHand));
+        Card highestCard=myCards.get(0);
+
+        for (int counter = 0; counter < HAND_SIZE; counter++) {
+            if(myCards.get(counter).getValue() > opponentCards.get(counter).getValue()) {
+               if(highestCard.getValue() < myCards.get(counter).getValue()) {
+                   highestCard = myCards.get(counter);
+               }
+            } else {
+                if(highestCard.getValue() < myCards.get(counter).getValue()) {
+                    highestCard = opponentCards.get(counter);
+                }
+            }
+
+        }
+
+        return myCards.contains(highestCard);
     }
 
 }
